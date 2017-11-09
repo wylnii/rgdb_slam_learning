@@ -106,7 +106,7 @@ RESULT_OF_PNP estimateMotion(FRAME& frame1, FRAME& frame2, CAMERA_INTRINSIC_PARA
             goodMatches.push_back( matches[i] );
     }
 
-    if(!is_loops && show_matches)
+    if(!is_loops && show_matches) //显示匹配过程
     {
         cv::Mat imgMatches;
         cv::drawMatches( frame1.rgb, frame1.kp, frame2.rgb, frame2.kp, matches, imgMatches );

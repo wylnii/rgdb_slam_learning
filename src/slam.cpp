@@ -23,10 +23,11 @@ using namespace std;
 #include <g2o/core/factory.h>
 #include <g2o/core/optimization_algorithm_factory.h>
 #include <g2o/core/optimization_algorithm_gauss_newton.h>
+#include <g2o/core/optimization_algorithm_levenberg.h>
 #include <g2o/solvers/eigen/linear_solver_eigen.h>
 #include <g2o/core/robust_kernel.h>
 #include <g2o/core/robust_kernel_impl.h>
-#include <g2o/core/optimization_algorithm_levenberg.h>
+#include <g2o/core/robust_kernel_factory.h>
 
 // 把g2o的定义放到前面
 typedef g2o::BlockSolver_6_3 SlamBlockSolver; 
@@ -50,7 +51,7 @@ int main( int argc, char** argv )
 {
     // 前面部分和vo是一样的
 
-    long startIndex  =   strtol(pd.getData("start_index" ).c_str(), NULL, 10 );
+    long startIndex  =   atoi( pd.getData("start_index" ).c_str() );
     int endIndex    =   atoi( pd.getData( "end_index"   ).c_str() );
 
     vector<string> rgbList, depthList;
@@ -202,6 +203,14 @@ CHECK_RESULT checkKeyframes( FRAME& f1, FRAME& f2, g2o::SparseOptimizer& opti, b
     static double max_norm_lp = atof( pd.getData("max_norm_lp").c_str() );
     static bool show_matches = pd.getData( "show_matches" )=="yes";
     static CAMERA_INTRINSIC_PARAMETERS camera = getDefaultCamera();
+
+    static string g2o_robust_kernel = pd.getData( "g2o_robust_kernel" );
+    static g2o::AbstractRobustKernelCreator* rk_creator = g2o::RobustKernelFactory::instance()->creator(g2o_robust_kernel );
+    if(rk_creator == NULL)
+    {
+        cout << RED "Unknown Robust Kernel : " << g2o_robust_kernel <<endl;
+        exit(-2);
+    }
     // 比较f1 和 f2
     RESULT_OF_PNP result = estimateMotion( f1, f2, camera, is_loops );
 
@@ -246,7 +255,8 @@ CHECK_RESULT checkKeyframes( FRAME& f1, FRAME& f2, g2o::SparseOptimizer& opti, b
     // 连接此边的两个顶点id
     edge->setVertex( 0, opti.vertex(f1.frameID ));
     edge->setVertex( 1, opti.vertex(f2.frameID ));
-    edge->setRobustKernel( new g2o::RobustKernelCauchy() );
+
+    edge->setRobustKernel(rk_creator->construct());
     // 信息矩阵
     Eigen::Matrix<double, 6, 6> information = Eigen::Matrix< double, 6,6 >::Identity();
     // 信息矩阵是协方差矩阵的逆，表示我们对边的精度的预先估计

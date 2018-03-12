@@ -273,19 +273,29 @@ bool getImageListFromConfigFile(vector<string> &rgbList, vector<string> &depthLi
     rgbList.clear();
     depthList.clear();
 
+    //line format: 1305031102.175304 rgb/1305031102.175304.png 1305031102.160407 depth/1305031102.160407.png
     while(!fin.eof())
     {
         string str;
         getline(fin,str);
         if(str[0] == '#')
             continue;
-        int pos = str.find(' ');
-        if(pos < 0)
+
+        int pos0 = str.find("rgb/");
+        if(pos0 < 0)
             continue;
-        string file1 = str.substr(0, pos);
-        string file2 = str.substr(pos+1, str.length());
-        rgbList.push_back(file1);
-        depthList.push_back(file2);
+        int pos1 = str.find(' ', pos0);
+        if (pos1 < 0)
+            continue;
+        string rgb = str.substr(pos0 + 4, pos1 - pos0 - 4);
+
+        int pos2 = str.rfind("depth/");
+        if (pos2 < 0)
+            continue;
+        string depth = str.substr(pos2 + 6, str.length() - pos2 - 6);
+
+        rgbList.push_back(rgb);
+        depthList.push_back(depth);
         if(!fin.good())
             return false;
     }

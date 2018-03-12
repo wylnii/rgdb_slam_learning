@@ -1,7 +1,7 @@
 # rgdb_slam_learning
 learning rgdb slam. based on rgbd-slam-tutorial-gx(gaoxiang) https://github.com/gaoxiang12/rgbd-slam-tutorial-gx.git
 
-## Changes
+### Changes
 
 - 1.图像特征提取采用ORBSLAM2中的算法
 
@@ -22,3 +22,4 @@ learning rgdb slam. based on rgbd-slam-tutorial-gx(gaoxiang) https://github.com/
 - 1.模块封装
 
 - 2.多线程
+

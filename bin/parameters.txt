@@ -27,7 +27,7 @@ rgb_extension=.png
 depth_dir=/home/wyl/Desktop/rgbd_dataset_freiburg1_xyz/depth/
 depth_extension=.png
 
-imagelist_file=/home/wyl/Desktop/rgbd_dataset_freiburg1_xyz/images.txt
+imagelist_file=/home/wyl/Desktop/rgbd_dataset_freiburg1_xyz/associations.txt
 
 # 点云分辨率
 voxel_grid=0.01

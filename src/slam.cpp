@@ -165,7 +165,9 @@ int main(int argc, char **argv)
                     t.restart();
                     nearLoop = checkNearbyLoops(keyframes, currFrame, globalOptimizer);
                     if(currIndex - keyframes.back().frameID > 10) //避免过于频繁的检测远距离回环
+                    {
                         farLoop = checkRandomLoops(keyframes, currFrame, globalOptimizer);
+                    }
                     currFrame.timeUsage.loop = t.elapsed();
 
                     if (nearLoop || farLoop)
@@ -174,12 +176,11 @@ int main(int argc, char **argv)
                         globalOptimizer.initializeOptimization();
                         globalOptimizer.optimize(10); //可以指定优化步数
                         currFrame.timeUsage.optimize = t.elapsed();
-
                     }
                 }
 
                 t.restart();
-                if (farLoop)
+                if (farLoop) //重新生成地图
                 {
                     map->clear();
                     for (auto &f : keyframes)
